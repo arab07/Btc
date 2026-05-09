@@ -1,2 +1,5 @@
-flask
-pyTelegramBotAPI
+# 1. تأكد من تثبيت المكتبة
+pip install pyTelegramBotAPI
+
+# 2. شغل البوت
+python3 bot.py
