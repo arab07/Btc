@@ -4,8 +4,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-TOKEN = "8266899631:AAEUxiahvm8gnAreYXVS0Zjj5d153D7Ab-Y"
-OWNER_ID = 8391968596
+TOKEN = "8635363451:AAFz9dXWHfXho2znqdfbMcWgFrdaPR7NgEo-Y"
+OWNER_ID = 8635363451
 bot = telebot.TeleBot(TOKEN)
 
 @app.route('/')
